@@ -1,4 +1,6 @@
-package com.xentoryxlabs.auth
+package com.xentoryxlabs.auth.routes
+
+import com.xentoryxlabs.auth.services.AuthService
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*

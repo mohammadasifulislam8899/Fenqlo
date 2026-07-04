@@ -1,6 +1,7 @@
-package com.xentoryxlabs.auth
+package com.xentoryxlabs.auth.services
 
 import com.xentoryxlabs.auth.models.*
+import com.xentoryxlabs.auth.repositories.*
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm

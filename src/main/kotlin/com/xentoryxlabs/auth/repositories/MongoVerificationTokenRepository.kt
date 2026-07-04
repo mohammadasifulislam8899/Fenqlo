@@ -1,4 +1,4 @@
-package com.xentoryxlabs.auth
+package com.xentoryxlabs.auth.repositories
 
 import com.xentoryxlabs.auth.models.VerificationToken
 
