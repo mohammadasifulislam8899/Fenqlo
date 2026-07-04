@@ -20,8 +20,12 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.websocket.*
+import kotlin.time.Duration.Companion.seconds
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.xentoryxlabs.chat.services.ChatService
+import com.xentoryxlabs.chat.routes.chatRoutes
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -39,6 +43,14 @@ fun Application.module() {
     // Install ContentNegotiation for JSON parsing/serialization
     install(ContentNegotiation) {
         json()
+    }
+
+    // Install WebSockets plugin
+    install(WebSockets) {
+        pingPeriod = 15.seconds
+        timeout = 15.seconds
+        maxFrameSize = Long.MAX_VALUE
+        masking = false
     }
 
     // Install Authentication and configure JWT Provider
@@ -74,11 +86,13 @@ fun Application.module() {
             single<VerificationTokenRepository> { MongoVerificationTokenRepository(get()) }
             single { AuthService(get(), get()) }
             single<com.xentoryxlabs.chat.repositories.ChatRepository> { com.xentoryxlabs.chat.repositories.MongoChatRepository(get()) }
+            single { ChatService(get()) }
         })
     }
 
     // Configure HTTP API Routing
     routing {
         authRoutes()
+        chatRoutes()
     }
 }
