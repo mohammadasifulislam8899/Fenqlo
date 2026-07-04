@@ -8,6 +8,12 @@ import io.ktor.server.response.*
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
+        status(HttpStatusCode.NotFound) { call, _ ->
+            call.respond(
+                HttpStatusCode.NotFound,
+                mapOf("error" to "Resource not found")
+            )
+        }
         exception<RequestValidationException> { call, cause ->
             call.respond(
                 HttpStatusCode.BadRequest,
