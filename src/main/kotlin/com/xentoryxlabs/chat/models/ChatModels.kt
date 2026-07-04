@@ -1,4 +1,4 @@
-package com.xentoryxlabs.chat
+package com.xentoryxlabs.chat.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
