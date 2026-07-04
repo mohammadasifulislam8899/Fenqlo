@@ -14,6 +14,10 @@ import com.xentoryxlabs.auth.MongoUserRepository
 import com.xentoryxlabs.auth.VerificationTokenRepository
 import com.xentoryxlabs.auth.MongoVerificationTokenRepository
 import com.xentoryxlabs.auth.AuthService
+import com.xentoryxlabs.auth.authRoutes
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.routing.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -28,6 +32,11 @@ fun Application.module() {
     configureStatusPages()
     configureRequestValidation()
 
+    // Install ContentNegotiation for JSON parsing/serialization
+    install(ContentNegotiation) {
+        json()
+    }
+
     install(Koin) {
         slf4jLogger()
         modules(module {
@@ -37,5 +46,10 @@ fun Application.module() {
             single<VerificationTokenRepository> { MongoVerificationTokenRepository(get()) }
             single { AuthService(get(), get()) }
         })
+    }
+
+    // Configure HTTP API Routing
+    routing {
+        authRoutes()
     }
 }
