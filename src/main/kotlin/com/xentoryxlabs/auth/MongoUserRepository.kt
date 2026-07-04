@@ -1,5 +1,7 @@
 package com.xentoryxlabs.auth
 
+import com.xentoryxlabs.auth.models.User
+
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Updates

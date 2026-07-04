@@ -1,5 +1,7 @@
 package com.xentoryxlabs.auth
 
+import com.xentoryxlabs.auth.models.VerificationToken
+
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import kotlinx.coroutines.Dispatchers

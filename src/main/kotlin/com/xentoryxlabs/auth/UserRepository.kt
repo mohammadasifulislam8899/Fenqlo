@@ -1,5 +1,7 @@
 package com.xentoryxlabs.auth
 
+import com.xentoryxlabs.auth.models.User
+
 interface UserRepository {
     suspend fun findById(id: String): User?
     suspend fun findByUsername(username: String): User?

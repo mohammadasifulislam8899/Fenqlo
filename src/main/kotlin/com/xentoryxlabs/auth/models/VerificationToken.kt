@@ -1,4 +1,4 @@
-package com.xentoryxlabs.auth
+package com.xentoryxlabs.auth.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

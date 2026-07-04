@@ -1,5 +1,7 @@
 package com.xentoryxlabs.auth
 
+import com.xentoryxlabs.auth.models.*
+
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import org.mindrot.jbcrypt.BCrypt

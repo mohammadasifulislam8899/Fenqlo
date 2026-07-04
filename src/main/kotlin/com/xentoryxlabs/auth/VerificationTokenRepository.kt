@@ -1,5 +1,7 @@
 package com.xentoryxlabs.auth
 
+import com.xentoryxlabs.auth.models.VerificationToken
+
 
 
 interface VerificationTokenRepository {
