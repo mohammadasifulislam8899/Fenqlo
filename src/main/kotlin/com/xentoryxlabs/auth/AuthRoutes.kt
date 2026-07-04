@@ -5,31 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 import org.koin.ktor.ext.inject
-
-@Serializable
-data class SignupRequest(
-    val username: String,
-    val email: String,
-    val password: String
-)
-
-@Serializable
-data class LoginRequest(
-    val username: String,
-    val password: String
-)
-
-@Serializable
-data class VerifyOtpRequest(
-    val code: String
-)
-
-@Serializable
-data class AuthResponse(
-    val token: String
-)
+import com.xentoryxlabs.auth.requests.SignupRequest
+import com.xentoryxlabs.auth.requests.LoginRequest
+import com.xentoryxlabs.auth.requests.VerifyOtpRequest
+import com.xentoryxlabs.auth.responses.AuthResponse
 
 fun Route.authRoutes() {
     val authService by inject<AuthService>()
