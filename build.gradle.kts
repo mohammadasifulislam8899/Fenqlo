@@ -29,6 +29,7 @@ dependencies {
     implementation(ktorLibs.server.requestValidation)
     implementation(ktorLibs.server.statusPages)
     implementation(ktorLibs.server.websockets)
+    implementation(ktorLibs.server.auth.jwt)
     implementation(libs.koin.ktor)
     implementation(libs.koin.loggerSlf4j)
     implementation(libs.logback.classic)

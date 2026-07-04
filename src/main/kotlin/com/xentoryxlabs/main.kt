@@ -18,6 +18,10 @@ import com.xentoryxlabs.auth.routes.authRoutes
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -35,6 +39,30 @@ fun Application.module() {
     // Install ContentNegotiation for JSON parsing/serialization
     install(ContentNegotiation) {
         json()
+    }
+
+    // Install Authentication and configure JWT Provider
+    install(Authentication) {
+        jwt("auth-jwt") {
+            val jwtSecret = "secret"
+            val jwtIssuer = "https://jwt-provider-domain/"
+            val jwtAudience = "jwt-audience"
+
+            realm = "Access to chat server"
+            verifier(
+                JWT.require(Algorithm.HMAC256(jwtSecret))
+                    .withAudience(jwtAudience)
+                    .withIssuer(jwtIssuer)
+                    .build()
+            )
+            validate { credential ->
+                if (credential.payload.getClaim("userId").asString() != null) {
+                    JWTPrincipal(credential.payload)
+                } else {
+                    null
+                }
+            }
+        }
     }
 
     install(Koin) {
