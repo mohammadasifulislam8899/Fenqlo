@@ -86,7 +86,7 @@ fun Application.module() {
             single<VerificationTokenRepository> { MongoVerificationTokenRepository(get()) }
             single { AuthService(get(), get()) }
             single<com.xentoryxlabs.chat.repositories.ChatRepository> { com.xentoryxlabs.chat.repositories.MongoChatRepository(get()) }
-            single { ChatService(get()) }
+            single { ChatService(get(), get()) }
         })
     }
 

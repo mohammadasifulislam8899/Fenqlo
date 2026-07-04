@@ -61,8 +61,9 @@ fun Route.chatRoutes() {
             return@webSocket
         }
 
-        // Register session in ChatService
+        // Register session in ChatService and cache status as online
         chatService.registerSession(userId, this)
+        chatService.setUserOnline(userId)
 
         try {
             for (frame in incoming) {
@@ -84,10 +85,8 @@ fun Route.chatRoutes() {
                             // Save message in MongoDB
                             chatRepository.saveMessage(message)
 
-                            // Broadcast message directly to online conversation members on this node (Pre-Redis Step 5)
-                            conversation.members.forEach { memberId ->
-                                chatService.sendMessageToUser(memberId, message)
-                            }
+                            // Publish message to Redis Pub/Sub to broadcast to all nodes
+                            chatService.publishMessage(message)
                         }
                     } catch (e: Exception) {
                         send(Frame.Text(Json.encodeToString(mapOf("error" to "Failed to process message: ${e.localizedMessage}"))))
@@ -95,8 +94,9 @@ fun Route.chatRoutes() {
                 }
             }
         } finally {
-            // Clean up session on disconnect
+            // Clean up session and cache status as offline on disconnect
             chatService.removeSession(userId)
+            chatService.setUserOffline(userId)
         }
     }
 
