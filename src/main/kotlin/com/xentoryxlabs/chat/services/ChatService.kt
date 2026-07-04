@@ -3,6 +3,7 @@ package com.xentoryxlabs.chat.services
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import com.xentoryxlabs.chat.models.Message
+import com.xentoryxlabs.chat.responses.UserStatus
 import com.xentoryxlabs.chat.repositories.ChatRepository
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
@@ -103,15 +104,36 @@ class ChatService(
     }
 
     /**
-     * Caches user status as offline in Redis.
+     * Caches user status as offline in Redis, storing the current epoch time as last seen.
      */
     suspend fun setUserOffline(userId: String) = withContext(Dispatchers.IO) {
         try {
             redisPool.resource.use { jedis ->
-                jedis.set("user:status:$userId", "offline")
+                jedis.set("user:status:$userId", System.currentTimeMillis().toString())
             }
         } catch (e: Exception) {
             println("Failed to cache offline status in Redis: ${e.localizedMessage}")
+        }
+    }
+
+    /**
+     * Retrieves online status and last seen timestamp of a user from Redis.
+     */
+    suspend fun getUserStatus(userId: String): UserStatus = withContext(Dispatchers.IO) {
+        try {
+            redisPool.resource.use { jedis ->
+                val statusValue = jedis.get("user:status:$userId")
+                when {
+                    statusValue == "online" -> UserStatus(userId, isOnline = true, lastSeen = null)
+                    statusValue != null -> {
+                        val lastSeenTime = statusValue.toLongOrNull()
+                        UserStatus(userId, isOnline = false, lastSeen = lastSeenTime)
+                    }
+                    else -> UserStatus(userId, isOnline = false, lastSeen = null)
+                }
+            }
+        } catch (e: Exception) {
+            UserStatus(userId, isOnline = false, lastSeen = null)
         }
     }
 

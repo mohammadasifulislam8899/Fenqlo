@@ -7,6 +7,7 @@ import com.xentoryxlabs.chat.models.Message
 import com.xentoryxlabs.chat.requests.CreateConversationRequest
 import com.xentoryxlabs.chat.repositories.ChatRepository
 import com.xentoryxlabs.chat.services.ChatService
+import com.xentoryxlabs.chat.responses.UserStatus
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -156,6 +157,12 @@ fun Route.chatRoutes() {
 
                 val messages = chatRepository.findMessagesForConversation(conversationId)
                 call.respond(HttpStatusCode.OK, messages)
+            }
+
+            get("/users/{userId}/status") {
+                val targetUserId = call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Missing user ID"))
+                val status = chatService.getUserStatus(targetUserId)
+                call.respond(HttpStatusCode.OK, status)
             }
         }
     }
