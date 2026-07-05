@@ -21,6 +21,9 @@ import io.ktor.server.routing.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.websocket.*
+import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpHeaders
 import kotlin.time.Duration.Companion.seconds
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -39,6 +42,17 @@ fun Application.module() {
     configureCallLogging()
     configureStatusPages()
     configureRequestValidation()
+
+    // Install CORS plugin
+    install(CORS) {
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Patch)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
+        anyHost()
+    }
 
     // Install ContentNegotiation for JSON parsing/serialization
     install(ContentNegotiation) {
