@@ -8,4 +8,5 @@ interface UserRepository {
     suspend fun findByEmail(email: String): User?
     suspend fun create(user: User): Boolean
     suspend fun verifyUser(id: String): Boolean
+    suspend fun findAll(): List<User>
 }

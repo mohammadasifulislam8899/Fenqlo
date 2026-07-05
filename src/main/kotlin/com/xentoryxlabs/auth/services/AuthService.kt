@@ -116,4 +116,8 @@ class AuthService(
             .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000)) // 1 hour expiration
             .sign(Algorithm.HMAC256(jwtSecret))
     }
+
+    suspend fun getAllUsers(): List<User> {
+        return userRepository.findAll()
+    }
 }

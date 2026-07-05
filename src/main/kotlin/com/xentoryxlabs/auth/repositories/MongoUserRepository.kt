@@ -24,7 +24,7 @@ class MongoUserRepository(
         .build()
 
     override suspend fun findById(id: String): User? = withContext(Dispatchers.IO) {
-        val document = usersCollection.find(Filters.eq("_id", id)).first()
+        val document = usersCollection.find(Filters.eq("id", id)).first()
         document?.let {
             Json.decodeFromString(User.serializer(), it.toJson(jsonSettings))
         }
@@ -53,9 +53,18 @@ class MongoUserRepository(
 
     override suspend fun verifyUser(id: String): Boolean = withContext(Dispatchers.IO) {
         val result = usersCollection.updateOne(
-            Filters.eq("_id", id),
+            Filters.eq("id", id),
             Updates.set("isVerified", true)
         )
         result.matchedCount > 0
+    }
+
+    override suspend fun findAll(): List<User> = withContext(Dispatchers.IO) {
+        val users = mutableListOf<User>()
+        usersCollection.find().forEach { doc ->
+            val user = Json.decodeFromString(User.serializer(), doc.toJson(jsonSettings))
+            users.add(user)
+        }
+        users
     }
 }

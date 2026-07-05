@@ -7,11 +7,13 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.auth.*
 import org.koin.ktor.ext.inject
 import com.xentoryxlabs.auth.requests.SignupRequest
 import com.xentoryxlabs.auth.requests.LoginRequest
 import com.xentoryxlabs.auth.requests.VerifyOtpRequest
 import com.xentoryxlabs.auth.responses.AuthResponse
+import com.xentoryxlabs.auth.responses.UserResponse
 
 fun Route.authRoutes() {
     val authService by inject<AuthService>()
@@ -45,6 +47,20 @@ fun Route.authRoutes() {
             } else {
                 call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Invalid credentials or account not verified"))
             }
+        }
+    }
+
+    authenticate("auth-jwt") {
+        get("/api/users") {
+            val users = authService.getAllUsers().map {
+                UserResponse(
+                    id = it.id,
+                    username = it.username,
+                    email = it.email,
+                    isVerified = it.isVerified
+                )
+            }
+            call.respond(HttpStatusCode.OK, users)
         }
     }
 }
